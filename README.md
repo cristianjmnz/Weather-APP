@@ -26,7 +26,7 @@ App del tiempo en el navegador hecha con HTML, CSS y JavaScript vanilla. Muestra
 
 ### Opción 1 — Ver en producción
 
-👉 [weather.vercel.app](https://weather.vercel.app) 
+👉 [weather.vercel.app](weather-app-theta-ten-71.vercel.app) 
 
 ### Opción 2 — Correrlo en local
 
