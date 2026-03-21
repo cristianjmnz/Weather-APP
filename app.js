@@ -221,14 +221,12 @@ function searchCity() {
   if (!city) return;
   showLoader();
 
-  // Clima actual
-  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=es`)
+  fetch(`/api/weather?city=${encodeURIComponent(city)}&type=weather`)
     .then(res => res.json())
     .then(data => showWeather(data))
     .catch(() => showError("Error al obtener datos. Comprueba tu conexión."));
 
-  // Pronóstico
-  fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=es`)
+  fetch(`/api/weather?city=${encodeURIComponent(city)}&type=forecast`)
     .then(res => res.json())
     .then(data => showForecast(data))
     .catch(() => {});
@@ -255,14 +253,12 @@ function autoLocate() {
 
       const { latitude: lat, longitude: lon } = pos.coords;
 
-      // Clima actual por coordenadas
-      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`)
+      fetch(`/api/weather?lat=${lat}&lon=${lon}&type=weather`)
         .then(res => res.json())
         .then(data => showWeather(data))
         .catch(() => showError("Error al obtener datos."));
 
-      // Pronóstico por coordenadas
-      fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`)
+      fetch(`/api/weather?lat=${lat}&lon=${lon}&type=forecast`)
         .then(res => res.json())
         .then(data => showForecast(data))
         .catch(() => {});
