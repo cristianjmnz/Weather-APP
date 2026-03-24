@@ -34,15 +34,40 @@ function getWMO(code) {
 // =============================================
 //  MENSAJE CONTEXTUAL SEGÚN CLIMA
 // =============================================
-function getAlert(code) {
-  if (code === 0 || code === 1) return { text: 'Cielo despejado. Buen momento para salir.', dot: '#60a5fa' };
-  if (code === 2 || code === 3) return { text: 'Cielo nublado. Puede refrescar por la tarde.', dot: '#94a3b8' };
-  if (code >= 45 && code <= 48) return { text: 'Hay niebla. Conduce con precaución.', dot: '#cbd5e1' };
-  if (code >= 51 && code <= 67) return { text: 'Lleva paraguas. Se esperan lluvias.', dot: '#60a5fa' };
-  if (code >= 71 && code <= 77) return { text: 'Nevando. Abrígate bien y ten cuidado al salir.', dot: '#93c5fd' };
-  if (code >= 80 && code <= 82) return { text: 'Chubascos a lo largo del día. Lleva paraguas.', dot: '#60a5fa' };
-  if (code >= 85 && code <= 86) return { text: 'Chubascos de nieve. Precaución en carretera.', dot: '#93c5fd' };
-  if (code >= 95)                return { text: 'Tormenta eléctrica. Mejor quédate en casa.', dot: '#f87171' };
+function getAlert(code, temp) {
+  const frio = temp <= 5;
+  const fresco = temp > 5 && temp <= 14;
+  const calor = temp >= 28;
+  const mucho_calor = temp >= 35;
+
+  if (code === 0 || code === 1) {
+    if (frio)       return { text: 'Cielo despejado, pero hace mucho frío. Abrígate bien.', dot: '#93c5fd' };
+    if (fresco)     return { text: 'Cielo despejado. Coge una chaqueta, refresca.', dot: '#60a5fa' };
+    if (mucho_calor) return { text: 'Cielo despejado y mucho calor. Protégete del sol.', dot: '#fbbf24' };
+    if (calor)      return { text: 'Cielo despejado. Aplícate protector solar.', dot: '#fbbf24' };
+    return { text: 'Cielo despejado. Buen día para salir.', dot: '#60a5fa' };
+  }
+  if (code === 2 || code === 3) {
+    if (frio)   return { text: 'Nublado y frío. Abrígate.', dot: '#94a3b8' };
+    if (fresco) return { text: 'Nublado y fresco. Lleva una chaqueta por si acaso.', dot: '#94a3b8' };
+    return { text: 'Cielo nublado. Puede refrescar por la tarde.', dot: '#94a3b8' };
+  }
+  if (code >= 45 && code <= 48)
+    return { text: 'Hay niebla. Conduce con precaución y luces encendidas.', dot: '#cbd5e1' };
+  if (code >= 51 && code <= 67) {
+    if (frio) return { text: 'Lluvia y frío. Paraguas y abrigo.', dot: '#60a5fa' };
+    return { text: 'Cielo lluvioso. Lleva paraguas antes de salir.', dot: '#60a5fa' };
+  }
+  if (code >= 71 && code <= 77)
+    return { text: 'Está nevando. Abrígate mucho y ten cuidado al salir.', dot: '#93c5fd' };
+  if (code >= 80 && code <= 82) {
+    if (frio) return { text: 'Chubascos y frío. Paraguas y abrigo sí o sí.', dot: '#60a5fa' };
+    return { text: 'Chubascos a lo largo del día. Lleva paraguas.', dot: '#60a5fa' };
+  }
+  if (code >= 85 && code <= 86)
+    return { text: 'Chubascos de nieve. Precaución en carretera.', dot: '#93c5fd' };
+  if (code >= 95)
+    return { text: 'Tormenta eléctrica. Mejor quédate en casa.', dot: '#f87171' };
   return { text: 'Consulta el pronóstico antes de salir.', dot: '#60a5fa' };
 }
 
@@ -236,7 +261,7 @@ function closeSearch() {
 function renderWeather(data, cityName, countryName) {
   const cur = data.current;
   const [ico, desc] = getWMO(cur.weather_code);
-  const alert = getAlert(cur.weather_code);
+  const alert = getAlert(cur.weather_code, Math.round(cur.temperature_2m));
   const isDay = cur.is_day === 1;
 
   updateSky(cur.weather_code, isDay);

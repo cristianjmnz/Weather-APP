@@ -242,9 +242,10 @@ header {
   margin: 1rem 0 0.25rem;
   justify-content: center;
 }
+
 .temp-big {
   font-family: 'Playfair Display', serif;
-  font-size: 5rem; font-weight: 700; line-height: 1;
+  font-size: 8rem; font-weight: 700; line-height: 1;
   color: var(--accent);
 }
 .temp-unit { font-size: 1.8rem; color: var(--text-dim); margin-bottom: 0.4rem; }
