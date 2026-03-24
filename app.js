@@ -253,44 +253,42 @@ function renderWeather(data, cityName, countryName) {
   const dateCapitalized = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
   const card = document.getElementById('mainCard');
-  card.innerHTML = `
-    <div class="city-row">
-      <div>
-        <div class="city-name">${cityName}</div>
-        <div class="city-meta">${countryName}</div>
-        <div class="local-time">⏱ ${timeStr} · ${dateCapitalized}</div>
-      </div>
-      <div class="weather-icon">${ico}</div>
+ card.innerHTML = `
+  <div class="city-row">
+    <div class="city-name">${cityName}</div>
+    <div class="city-meta">${countryName}</div>
+    <div class="local-time">⏱ ${timeStr} · ${dateCapitalized}</div>
+  </div>
+  <div class="weather-icon">${ico}</div>
+  <div class="temp-row">
+    <div class="temp-big">${Math.round(cur.temperature_2m)}</div>
+    <div class="temp-unit">°C</div>
+  </div>
+  <div class="feels-like">Sensación térmica ${Math.round(cur.apparent_temperature)}°C</div>
+  <div class="description">${desc}</div>
+  <div class="alert-box">
+    <div class="alert-dot" style="background:${alert.dot}"></div>
+    <span>${alert.text}</span>
+  </div>
+  <div class="divider"></div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-icon">💧</div>
+      <div class="stat-val">${cur.relative_humidity_2m}%</div>
+      <div class="stat-lbl">Humedad</div>
     </div>
-    <div class="temp-row">
-      <div class="temp-big">${Math.round(cur.temperature_2m)}</div>
-      <div class="temp-unit">°C</div>
+    <div class="stat">
+      <div class="stat-icon">💨</div>
+      <div class="stat-val">${Math.round(cur.wind_speed_10m)} km/h</div>
+      <div class="stat-lbl">Viento ${windDir(cur.wind_direction_10m)}</div>
     </div>
-    <div class="feels-like">Sensación térmica ${Math.round(cur.apparent_temperature)}°C</div>
-    <div class="description">${desc}</div>
-    <div class="alert-box">
-      <div class="alert-dot" style="background:${alert.dot}"></div>
-      <span>${alert.text}</span>
+    <div class="stat">
+      <div class="stat-icon">${isDay ? '🌅' : '🌙'}</div>
+      <div class="stat-val">${isDay ? 'Día' : 'Noche'}</div>
+      <div class="stat-lbl">Momento</div>
     </div>
-    <div class="divider"></div>
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-icon">💧</div>
-        <div class="stat-val">${cur.relative_humidity_2m}%</div>
-        <div class="stat-lbl">Humedad</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon">💨</div>
-        <div class="stat-val">${Math.round(cur.wind_speed_10m)} km/h</div>
-        <div class="stat-lbl">Viento ${windDir(cur.wind_direction_10m)}</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon">${isDay ? '🌅' : '🌙'}</div>
-        <div class="stat-val">${isDay ? 'Día' : 'Noche'}</div>
-        <div class="stat-lbl">Momento</div>
-      </div>
-    </div>
-  `;
+  </div>
+`;
   setTimeout(() => card.classList.add('visible'), 50);
 }
 
