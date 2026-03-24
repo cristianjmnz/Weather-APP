@@ -3,49 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
+  <title>Cielo — App del Tiempo</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Fondo animado -->
-  <div class="sky" id="sky"></div>
-  <div class="stars" id="stars"></div>
-  <div class="clouds" id="clouds">
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-    <div class="cloud"></div>
-  </div>
-  <div class="rain-container" id="rain"></div>
-  <div class="snow-container" id="snow"></div>
+  <!-- Fondos animados -->
+  <div class="bg-layer" id="bg"></div>
+  <div class="stars-layer" id="stars"></div>
+  <div class="sun-layer" id="sun-layer"></div>
+  <div class="clouds-layer" id="clouds"></div>
+  <div class="rain-layer" id="rain"></div>
+  <div class="snow-layer" id="snow"></div>
 
   <div class="app">
 
+    <!-- Cabecera -->
     <header>
-      <div class="brand">🌤️ Weather APP</div>
-      <button class="geo-btn" id="geoBtn" onclick="autoLocate()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="search-area">
+        <button class="icon-btn" id="searchToggle" onclick="toggleSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="search-pill-wrap" id="searchWrap">
+          <div class="search-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.35-4.35" stroke-linecap="round"/>
+            </svg>
+            <input class="search-field" id="cityInput"
+              placeholder="Busca una ciudad…"
+              onkeydown="if(event.key==='Enter') searchCity()">
+          </div>
+        </div>
+      </div>
+
+      <div class="brand">Cie<span>lo</span></div>
+
+      <button class="icon-btn" id="geoBtn" onclick="autoLocate()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
         </svg>
-        Mi ubicación
       </button>
     </header>
-
-    <!-- Buscador -->
-    <div class="search-wrap">
-      <input class="search-input" id="cityInput" type="text"
-        placeholder="Buscar ciudad… ej. Madrid, Tokyo, NYC"
-        onkeydown="if(event.key==='Enter') searchCity()">
-      <button class="search-btn" id="searchBtn" onclick="searchCity()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.35-4.35"/>
-        </svg>
-      </button>
-    </div>
 
     <!-- Estado / error -->
     <div id="statusArea"></div>
@@ -53,7 +57,7 @@
     <!-- Tarjeta principal -->
     <div class="card" id="mainCard"></div>
 
-    <!-- Pronóstico -->
+    <!-- Pronóstico 24h -->
     <div class="forecast-card" id="forecastCard"></div>
 
   </div>
