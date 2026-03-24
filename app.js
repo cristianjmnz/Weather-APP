@@ -262,12 +262,18 @@ function renderWeather(data, cityName, countryName) {
   const cur = data.current;
   const [ico, desc] = getWMO(cur.weather_code);
   const alert = getAlert(cur.weather_code, Math.round(cur.temperature_2m));
-  const isDay = cur.is_day === 1;
+  
+  const sunrise = new Date(data.daily.sunrise[0]);
+  const sunset = new Date(data.daily.sunset[0]);
+
+  const now = new Date();
+  
+  const isDay = now >= sunrise && now < sunset;
 
   updateSky(cur.weather_code, isDay);
   clearStatus();
 
-  const now = new Date();
+ 
   const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   const dateStr = now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   const dateCapitalized = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
@@ -362,7 +368,7 @@ function renderForecast(data) {
 // =============================================
 async function fetchOpenMeteo(lat, lon, cityName, countryName) {
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code,is_day&hourly=temperature_2m,weather_code,precipitation_probability&timezone=auto&forecast_days=2`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code,is_day&hourly=temperature_2m,weather_code,precipitation_probability&daily=sunrise,sunset&timezone=auto&forecast_days=2`;
     const res = await fetch(url);
     if (!res.ok) throw new Error();
     const data = await res.json();
