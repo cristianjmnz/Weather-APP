@@ -65,48 +65,43 @@ function updateSky(wmoCode, isDay) {
   const rain   = document.getElementById('rain');
   const snow   = document.getElementById('snow');
 
-  // Reset
   stars.className  = 'stars-layer';
   sunL.className   = 'sun-layer';
   clouds.className = 'clouds-layer';
   rain.className   = 'rain-layer';
   snow.className   = 'snow-layer';
 
-  // Fondo base
+  const isRain  = (wmoCode >= 51 && wmoCode <= 67) || (wmoCode >= 80 && wmoCode <= 82);
+  const isSnow  = (wmoCode >= 71 && wmoCode <= 77) || (wmoCode >= 85 && wmoCode <= 86);
+  const isStorm = wmoCode >= 95;
+  const isCloudy = wmoCode >= 2 && wmoCode <= 3;
+  const isFog   = wmoCode >= 45 && wmoCode <= 48;
+
   if (!isDay) {
     bg.className = 'bg-layer night';
     buildStars();
     stars.classList.add('visible');
-  } else if (wmoCode <= 1) {
-    bg.className = 'bg-layer sunny';
-    buildSun();
-    sunL.classList.add('visible');
-  } else if (wmoCode <= 3) {
-    bg.className = 'bg-layer cloudy';
-    buildClouds(0.12);
-    clouds.classList.add('visible');
-  } else if ((wmoCode >= 51 && wmoCode <= 67) || (wmoCode >= 80 && wmoCode <= 82)) {
-    bg.className = 'bg-layer rainy';
-    buildClouds(0.07);
-    clouds.classList.add('visible');
-    buildRain();
-    rain.classList.add('visible');
-  } else if ((wmoCode >= 71 && wmoCode <= 77) || (wmoCode >= 85 && wmoCode <= 86)) {
-    bg.className = 'bg-layer snowy';
-    buildClouds(0.08);
-    clouds.classList.add('visible');
-    buildSnow();
-    snow.classList.add('visible');
-  } else if (wmoCode >= 95) {
+    if (isRain || isStorm) { buildClouds(0.06); clouds.classList.add('visible'); buildRain(); rain.classList.add('visible'); }
+    if (isSnow) { buildClouds(0.06); clouds.classList.add('visible'); buildSnow(); snow.classList.add('visible'); }
+    if (isCloudy || isFog) { buildClouds(0.08); clouds.classList.add('visible'); }
+  } else if (isStorm) {
     bg.className = 'bg-layer stormy';
-    buildClouds(0.06);
-    clouds.classList.add('visible');
-    buildRain();
-    rain.classList.add('visible');
-  } else {
+    buildClouds(0.06); clouds.classList.add('visible');
+    buildRain(); rain.classList.add('visible');
+  } else if (isRain) {
+    bg.className = 'bg-layer rainy';
+    buildClouds(0.07); clouds.classList.add('visible');
+    buildRain(); rain.classList.add('visible');
+  } else if (isSnow) {
+    bg.className = 'bg-layer snowy';
+    buildClouds(0.08); clouds.classList.add('visible');
+    buildSnow(); snow.classList.add('visible');
+  } else if (isCloudy || isFog) {
     bg.className = 'bg-layer cloudy';
-    buildClouds(0.09);
-    clouds.classList.add('visible');
+    buildClouds(0.12); clouds.classList.add('visible');
+  } else {
+    bg.className = 'bg-layer sunny';
+    buildSun(); sunL.classList.add('visible');
   }
 }
 
