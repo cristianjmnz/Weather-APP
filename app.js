@@ -96,6 +96,13 @@ function updateSky(wmoCode, isDay) {
   rain.className   = 'rain-layer';
   snow.className   = 'snow-layer';
 
+  // reset visibilidad
+  stars.classList.remove('visible');
+  sunL.classList.remove('visible');
+  clouds.classList.remove('visible');
+  rain.classList.remove('visible');
+  snow.classList.remove('visible');
+  
   const isRain  = (wmoCode >= 51 && wmoCode <= 67) || (wmoCode >= 80 && wmoCode <= 82);
   const isSnow  = (wmoCode >= 71 && wmoCode <= 77) || (wmoCode >= 85 && wmoCode <= 86);
   const isStorm = wmoCode >= 95;
@@ -260,31 +267,19 @@ function closeSearch() {
 // =============================================
 function renderWeather(data, cityName, countryName) {
   const cur = data.current;
-
-  console.log({
-  now: new Date(data.current.time),
-  sunrise: new Date(data.daily.sunrise[0]),
-  sunset: new Date(data.daily.sunset[0]),
-});
-
   const [ico, desc] = getWMO(cur.weather_code);
   const alert = getAlert(cur.weather_code, Math.round(cur.temperature_2m));
   
   const sunrise = new Date(data.daily.sunrise[0]);
   const sunset = new Date(data.daily.sunset[0]);
 
-  
-
   const now = new Date(data.current.time);
 
   const isDay = now >= sunrise && now < sunset;
 
- console.log("isDay:", isDay);
-
   updateSky(cur.weather_code, isDay);
   clearStatus();
 
- 
  
   const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   const dateStr = now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
