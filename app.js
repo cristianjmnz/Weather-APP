@@ -27,8 +27,11 @@ const WMO = {
   99: ['⛈️','Tormenta severa'],
 };
 
-function getWMO(code) {
-  return WMO[code] || ['🌡️','Desconocido'];
+function getWMO(code, isDay) {
+  if (code === 0){
+    return isDay ? ['☀️','Despejado'] : ['🌙','Despejado'];
+  }
+  const [ico, desc] = getWMO(cur.weather_code, isDay);
 }
 
 // =============================================
@@ -84,7 +87,7 @@ function windDir(deg) {
 // =============================================
 function updateSky(wmoCode, isDay) {
   document.querySelectorAll('svg').forEach(el => el.remove()); // limpiar SVGs previos
-  
+
   const bg     = document.getElementById('bg');
   const stars  = document.getElementById('stars');
   const sunL   = document.getElementById('sun-layer');
