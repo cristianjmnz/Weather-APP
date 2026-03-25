@@ -31,10 +31,10 @@ function getWMO(code, isDay) {
   if (code === 0){
     return isDay ? ['☀️','Despejado'] : ['🌙','Despejado'];
   }
-  
+  // fallback obligatorio
+  return ['☁️', 'Nublado'];
 }
-// fallback obligatorio
-return ['☁️', 'Nublado'];
+
 
 // =============================================
 //  MENSAJE CONTEXTUAL SEGÚN CLIMA
