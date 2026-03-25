@@ -160,7 +160,7 @@ function buildStars() {
 // ===== Construir sol =====
 function buildSun() {
   const c = document.getElementById('sun-layer');
-  if (c.children.length) return;
+  
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', '0 0 480 200');
   svg.style.cssText = 'position:absolute;inset:0;width:100%;height:200px';
