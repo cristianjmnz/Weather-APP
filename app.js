@@ -102,7 +102,14 @@ function updateSky(wmoCode, isDay) {
   clouds.classList.remove('visible');
   rain.classList.remove('visible');
   snow.classList.remove('visible');
-  
+
+  // limpiar elementos dinámicos
+  sunL.innerHTML = '';
+  stars.innerHTML = '';
+  clouds.innerHTML = '';
+  rain.innerHTML = '';
+  snow.innerHTML = '';
+
   const isRain  = (wmoCode >= 51 && wmoCode <= 67) || (wmoCode >= 80 && wmoCode <= 82);
   const isSnow  = (wmoCode >= 71 && wmoCode <= 77) || (wmoCode >= 85 && wmoCode <= 86);
   const isStorm = wmoCode >= 95;
