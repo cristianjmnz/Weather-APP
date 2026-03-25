@@ -34,6 +34,7 @@ function getWMO(code, isDay) {
   
 }
 const [ico, desc] = getWMO(cur.weather_code, isDay);
+
 // =============================================
 //  MENSAJE CONTEXTUAL SEGÚN CLIMA
 // =============================================
@@ -279,15 +280,15 @@ function closeSearch() {
 // =============================================
 function renderWeather(data, cityName, countryName) {
   const cur = data.current;
-  const [ico, desc] = getWMO(cur.weather_code);
-  const alert = getAlert(cur.weather_code, Math.round(cur.temperature_2m));
-  
+
   const sunrise = new Date(data.daily.sunrise[0]);
   const sunset = new Date(data.daily.sunset[0]);
-
   const now = new Date(data.current.time);
 
   const isDay = now >= sunrise && now < sunset;
+
+  const [ico, desc] = getWMO(cur.weather_code, isDay);
+  const alert = getAlert(cur.weather_code, Math.round(cur.temperature_2m));
 
   updateSky(cur.weather_code, isDay);
   clearStatus();
