@@ -83,6 +83,8 @@ function windDir(deg) {
 //  FONDO DINÁMICO
 // =============================================
 function updateSky(wmoCode, isDay) {
+  document.querySelectorAll('svg').forEach(el => el.remove()); // limpiar SVGs previos
+  
   const bg     = document.getElementById('bg');
   const stars  = document.getElementById('stars');
   const sunL   = document.getElementById('sun-layer');
