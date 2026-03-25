@@ -33,7 +33,8 @@ function getWMO(code, isDay) {
   }
   
 }
-const [ico, desc] = getWMO(cur.weather_code, isDay);
+// fallback obligatorio
+return ['☁️', 'Nublado'];
 
 // =============================================
 //  MENSAJE CONTEXTUAL SEGÚN CLIMA
@@ -361,7 +362,7 @@ function renderForecast(data) {
   for (let i = startIdx; i < startIdx + 24 && i < times.length; i++) {
     const t = new Date(times[i]);
     const label = i === startIdx ? 'Ahora' : t.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    const [ico] = getWMO(data.hourly.weather_code[i]);
+    const [ico] = getWMO(data.hourly.weather_code[i], true);
     const temp = Math.round(data.hourly.temperature_2m[i]);
     const precip = data.hourly.precipitation_probability[i] ?? 0;
     items.push({ label, ico, temp, precip, isNow: i === startIdx });
