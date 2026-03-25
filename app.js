@@ -31,9 +31,9 @@ function getWMO(code, isDay) {
   if (code === 0){
     return isDay ? ['☀️','Despejado'] : ['🌙','Despejado'];
   }
-  const [ico, desc] = getWMO(cur.weather_code, isDay);
+  
 }
-
+const [ico, desc] = getWMO(cur.weather_code, isDay);
 // =============================================
 //  MENSAJE CONTEXTUAL SEGÚN CLIMA
 // =============================================
