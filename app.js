@@ -28,11 +28,39 @@ const WMO = {
 };
 
 function getWMO(code, isDay) {
-  if (code === 0){
-    return isDay ? ['☀️','Despejado'] : ['🌙','Despejado'];
+  if (code === 0 || code === 1) return isDay ? ['☀️','Despejado'] : ['🌙','Despejado'];
+  return WMO[code] || ['🌡️','Desconocido'];
+}
+
+// =============================================
+//  NOTIFICACIONES LOCALES DE LLUVIA
+// =============================================
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    await Notification.requestPermission();
   }
-  // fallback obligatorio
-  return ['☁️', 'Nublado'];
+}
+
+function isWetWeather(wmoCode) {
+  return (wmoCode >= 51 && wmoCode <= 67) ||
+         (wmoCode >= 80 && wmoCode <= 82) ||
+         wmoCode >= 95;
+}
+
+function notifyIfRainy(wmoCode, cityName, temp) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+  if (!isWetWeather(wmoCode)) return;
+  const [ico, desc] = getWMO(wmoCode, true);
+  const alert = getAlert(wmoCode, temp);
+  new Notification(`${ico} ${cityName} — ${desc}`, {
+    body: alert.text,
+    icon: '/icon-192x192.png',
+    badge: '/icon-72x72.png',
+    tag: 'weather-rain-alert',
+    renotify: false,
+  });
 }
 
 
@@ -336,6 +364,8 @@ function renderWeather(data, cityName, countryName) {
     </div>
   </div>
 `;
+  requestNotificationPermission();
+  notifyIfRainy(cur.weather_code, cityName, Math.round(cur.temperature_2m));
   setTimeout(() => card.classList.add('visible'), 50);
 }
 

@@ -4,12 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weather App</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Weather App">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Fondos animados -->
   <div class="bg-layer" id="bg"></div>
   <div class="stars-layer" id="stars"></div>
   <div class="sun-layer" id="sun-layer"></div>
@@ -18,50 +29,49 @@
   <div class="snow-layer" id="snow"></div>
 
   <div class="app">
-
-    <!-- Cabecera -->
     <header>
-  <div class="search-area">
-    <button class="icon-btn" id="searchToggle" onclick="toggleSearch()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="11" cy="11" r="7"/>
-        <path d="m21 21-4.35-4.35" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <div class="search-pill-wrap" id="searchWrap">
-      <div class="search-pill">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
-          <circle cx="11" cy="11" r="7"/>
-          <path d="m21 21-4.35-4.35" stroke-linecap="round"/>
-        </svg>
-        <input class="search-field" id="cityInput"
-          placeholder="Busca una ciudad…"
-          onkeydown="if(event.key==='Enter') searchCity()">
+      <div class="search-area">
+        <button class="icon-btn" id="searchToggle" onclick="toggleSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m21 21-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="search-pill-wrap" id="searchWrap">
+          <div class="search-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.35-4.35" stroke-linecap="round"/>
+            </svg>
+            <input class="search-field" id="cityInput"
+              placeholder="Busca una ciudad…"
+              onkeydown="if(event.key==='Enter') searchCity()">
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="brand">Weather App</div>
+      <div class="brand">Weather App</div>
 
-  <button class="icon-btn" id="geoBtn" onclick="autoLocate()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
-    </svg>
-  </button>
-</header>
+      <button class="icon-btn" id="geoBtn" onclick="autoLocate()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+        </svg>
+      </button>
+    </header>
 
-    <!-- Estado / error -->
     <div id="statusArea"></div>
-
-    <!-- Tarjeta principal -->
     <div class="card" id="mainCard"></div>
-
-    <!-- Pronóstico 24h -->
     <div class="forecast-card" id="forecastCard"></div>
-
   </div>
 
   <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>
