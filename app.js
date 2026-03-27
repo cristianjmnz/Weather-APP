@@ -406,6 +406,7 @@ async function fetchOpenMeteo(lat, lon, cityName, countryName) {
     const data = await res.json();
     renderWeather(data, cityName, countryName);
     renderForecast(data);
+    initRadarMap(lat, lon);
   } catch {
     showError('No se pudieron cargar los datos del clima.');
   }
