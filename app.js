@@ -1,6 +1,4 @@
-// =============================================
-//  MAPEO CÓDIGOS WMO → ICONO + DESCRIPCIÓN
-// =============================================
+// ============== MAPEO CÓDIGOS WMO → ICONO + DESCRIPCIÓN
 const WMO = {
   0:  ['☀️','Despejado'],
   1:  ['🌤️','Mayormente despejado'],
@@ -32,9 +30,7 @@ function getWMO(code, isDay) {
   return WMO[code] || ['🌡️','Desconocido'];
 }
 
-// =============================================
-//  NOTIFICACIONES LOCALES DE LLUVIA
-// =============================================
+// ============== NOTIFICACIONES LOCALES DE LLUVIA
 async function requestNotificationPermission() {
   if (!('Notification' in window)) return;
   if (Notification.permission === 'default') {
@@ -64,9 +60,7 @@ function notifyIfRainy(wmoCode, cityName, temp) {
 }
 
 
-// =============================================
-//  MENSAJE CONTEXTUAL SEGÚN CLIMA
-// =============================================
+// ============== MENSAJE CONTEXTUAL SEGÚN CLIMA
 function getAlert(code, temp) {
   const frio = temp <= 5;
   const fresco = temp > 5 && temp <= 14;
@@ -104,17 +98,14 @@ function getAlert(code, temp) {
   return { text: 'Consulta el pronóstico antes de salir.', dot: '#60a5fa' };
 }
 
-// =============================================
-//  DIRECCIÓN DEL VIENTO
-// =============================================
+
+// ============== DIRECCIÓN DEL VIENTO
 function windDir(deg) {
   const dirs = ['N','NE','E','SE','S','SO','O','NO'];
   return dirs[Math.round(deg / 45) % 8];
 }
 
-// =============================================
-//  FONDO DINÁMICO
-// =============================================
+// ============== FONDO DINÁMICO
 function updateSky(wmoCode, isDay) {
   document.querySelectorAll('svg').forEach(el => el.remove()); // limpiar SVGs previos
 
@@ -268,9 +259,7 @@ function buildSnow() {
   }
 }
 
-// =============================================
-//  UI HELPERS
-// =============================================
+// ============== UI HELPERS
 function showLoader() {
   document.getElementById('statusArea').innerHTML =
     '<div class="status"><div class="loader"></div>Obteniendo datos...</div>';
@@ -287,9 +276,7 @@ function clearStatus() {
   document.getElementById('statusArea').innerHTML = '';
 }
 
-// =============================================
-//  BUSCADOR DESPLEGABLE
-// =============================================
+// ============== BUSCADOR DESPLEGABLE
 let searchOpen = false;
 
 function toggleSearch() {
@@ -304,9 +291,7 @@ function closeSearch() {
   document.getElementById('cityInput').blur();
 }
 
-// =============================================
-//  RENDER CLIMA ACTUAL (Open-Meteo)
-// =============================================
+// ============== RENDER CLIMA ACTUAL (Open-Meteo)
 function renderWeather(data, cityName, countryName) {
   const cur = data.current;
 
@@ -369,9 +354,7 @@ function renderWeather(data, cityName, countryName) {
   setTimeout(() => card.classList.add('visible'), 50);
 }
 
-// =============================================
-//  RENDER PRONÓSTICO 24H (Open-Meteo hourly)
-// =============================================
+// ============== RENDER PRONÓSTICO 24H (Open-Meteo hourly)
 function renderForecast(data) {
   const now = new Date();
   const currentHour = now.getHours();
@@ -414,9 +397,7 @@ function renderForecast(data) {
   setTimeout(() => fc.classList.add('visible'), 150);
 }
 
-// =============================================
-//  FETCH OPEN-METEO (clima + pronóstico horario)
-// =============================================
+// ============== FETCH OPEN-METEO (clima + pronóstico horario)
 async function fetchOpenMeteo(lat, lon, cityName, countryName) {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code,is_day&hourly=temperature_2m,weather_code,precipitation_probability&daily=sunrise,sunset&timezone=auto&forecast_days=2`;
@@ -430,9 +411,7 @@ async function fetchOpenMeteo(lat, lon, cityName, countryName) {
   }
 }
 
-// =============================================
-//  BUSCAR CIUDAD (OpenWeatherMap geocoding → Open-Meteo)
-// =============================================
+// ============== BUSCAR CIUDAD (OpenWeatherMap geocoding → Open-Meteo)
 async function searchCity() {
   const city = document.getElementById('cityInput').value.trim();
   if (!city) return;
@@ -460,9 +439,7 @@ async function searchCity() {
   }
 }
 
-// =============================================
-//  GEOLOCALIZACIÓN AUTOMÁTICA
-// =============================================
+// ============== GEOLOCALIZACIÓN AUTOMÁTICA
 function autoLocate() {
   if (!navigator.geolocation) {
     showError('Geolocalización no disponible en tu navegador.');
@@ -487,7 +464,122 @@ function autoLocate() {
   );
 }
 
-// =============================================
-//  INICIO
-// =============================================
+// ============== INICIO
 window.addEventListener('load', autoLocate);
+
+// ============== MAPA RADAR (RainViewer + Leaflet)
+let radarMap = null;
+let radarLayer = null;
+let radarFrames = [];
+let currentFrameIdx = 0;
+ 
+async function initRadarMap(lat, lon) {
+  const mapCard = document.getElementById('mapCard');
+ 
+  mapCard.innerHTML = `
+    <div class="map-header">
+      <span class="map-title">Radar de precipitaciones</span>
+      <div class="map-live"><div class="live-dot"></div>En vivo</div>
+    </div>
+    <div id="radar-map"></div>
+    <div class="map-legend">
+      <span>Ligera</span>
+      <div class="legend-bar"></div>
+      <span>Intensa</span>
+    </div>
+    <div class="map-time-btns" id="timeBtns"></div>
+  `;
+ 
+  setTimeout(() => mapCard.classList.add('visible'), 50);
+ 
+  if (radarMap) {
+    radarMap.remove();
+    radarMap = null;
+  }
+ 
+  radarMap = L.map('radar-map', {
+    center: [lat, lon],
+    zoom: 7,
+    zoomControl: false,
+    attributionControl: true,
+  });
+
+  // Tiles oscuros de CartoDB
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19,
+  }).addTo(radarMap);
+ 
+  // Marcador de ubicación con estilo personalizado
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;border-radius:50%;background:#f0c87a;border:2px solid rgba(255,255,255,0.8);box-shadow:0 0 8px rgba(240,200,122,0.6)"></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
+  L.marker([lat, lon], { icon }).addTo(radarMap);
+ 
+  // Cargar frames de RainViewer
+  try {
+    const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+    const data = await res.json();
+ 
+    radarFrames = [
+      ...data.radar.past.slice(-3),
+      ...(data.radar.nowcast || []).slice(0, 4),
+    ];
+ 
+    buildTimeButtons(radarFrames, lat, lon);
+    showRadarFrame(radarFrames.length - 4 < 0 ? 0 : radarFrames.length - 4, lat, lon);
+  } catch {
+    console.log('RainViewer no disponible');
+  }
+}
+ 
+function showRadarFrame(idx, lat, lon) {
+  if (!radarMap || !radarFrames.length) return;
+  currentFrameIdx = idx;
+ 
+  if (radarLayer) {
+    radarMap.removeLayer(radarLayer);
+    radarLayer = null;
+  }
+ 
+  const frame = radarFrames[idx];
+  radarLayer = L.tileLayer(
+    `https://tilecache.rainviewer.com${frame.path}/256/{z}/{x}/{y}/2/1_1.png`,
+    { opacity: 0.7, zIndex: 10 }
+  ).addTo(radarMap);
+ 
+  // Actualizar botón activo
+  document.querySelectorAll('.time-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+}
+ 
+function buildTimeButtons(frames, lat, lon) {
+  const container = document.getElementById('timeBtns');
+  if (!container) return;
+ 
+  container.innerHTML = frames.map((frame, i) => {
+    const t = new Date(frame.time * 1000);
+    const now = Date.now();
+    const diffMin = Math.round((t - now) / 60000);
+    let label;
+    if (Math.abs(diffMin) <= 5)      label = 'Ahora';
+    else if (diffMin < 0)            label = `−${Math.abs(diffMin)}min`;
+    else                             label = `+${diffMin}min`;
+    return `<button class="time-btn" onclick="showRadarFrame(${i}, ${lat}, ${lon})">${label}</button>`;
+  }).join('');
+ 
+  // Activar el más cercano a ahora
+  const nowTs = Date.now() / 1000;
+  let closestIdx = 0;
+  let minDiff = Infinity;
+  frames.forEach((f, i) => {
+    const d = Math.abs(f.time - nowTs);
+    if (d < minDiff) { minDiff = d; closestIdx = i; }
+  });
+  showRadarFrame(closestIdx, lat, lon);
+}
